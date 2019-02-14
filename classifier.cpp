@@ -300,47 +300,25 @@ int main(int argc, const char ** argv)
 
 	// creation of graphs
 	vx_graph graph_inception = vxCreateGraph(context);
-	status = vxGetStatus((vx_reference)graph_inception);
-	if (status) {
-		printf("ERROR: vxCreateGraph(...) failed (%d)\n", status);
-		return -1;
-	}
+	ERROR_CHECK_OBJECT(graph_inception);
+
 	vx_graph graph_resnet = vxCreateGraph(context);
-	status = vxGetStatus((vx_reference)graph_resnet);
-	if (status) {
-		printf("ERROR: vxCreateGraph(...) failed (%d)\n", status);
-		return -1;
-	}
+	ERROR_CHECK_OBJECT(graph_resnet);
+
 	vx_graph graph_vgg19 = vxCreateGraph(context);
-	status = vxGetStatus((vx_reference)graph_vgg19);
-	if (status) {
-		printf("ERROR: vxCreateGraph(...) failed (%d)\n", status);
-		return -1;
-	}
+	ERROR_CHECK_OBJECT(graph_vgg19);
+
 	vx_graph graph_googlenet = vxCreateGraph(context);
-	status = vxGetStatus((vx_reference)graph_googlenet);
-	if (status) {
-		printf("ERROR: vxCreateGraph(...) failed (%d)\n", status);
-		return -1;
-	}
+	ERROR_CHECK_OBJECT(graph_googlenet);
+
 	vx_graph graph_squeezenet = vxCreateGraph(context);
-	status = vxGetStatus((vx_reference)graph_squeezenet);
-	if (status) {
-		printf("ERROR: vxCreateGraph(...) failed (%d)\n", status);
-		return -1;
-	}
+	ERROR_CHECK_OBJECT(graph_squeezenet);
+
 	vx_graph graph_densenet121 = vxCreateGraph(context);
-	status = vxGetStatus((vx_reference)graph_densenet121);
-	if (status) {
-		printf("ERROR: vxCreateGraph(...) failed (%d)\n", status);
-		return -1;
-	}
+	ERROR_CHECK_OBJECT(graph_densenet121);
+
 	vx_graph graph_zfnet512 = vxCreateGraph(context);
-	status = vxGetStatus((vx_reference)graph_zfnet512);
-	if (status) {
-		printf("ERROR: vxCreateGraph(...) failed (%d)\n", status);
-		return -1;
-	}
+	ERROR_CHECK_OBJECT(graph_zfnet512);
 
 
 	// create and initialize input tensor data
@@ -348,40 +326,26 @@ int main(int argc, const char ** argv)
 
 	// create data for different sizes
 	vx_tensor data_224x224_inception = vxCreateTensor(context, 4, dims_data_224X224, VX_TYPE_FLOAT32, 0);
-	if (vxGetStatus((vx_reference)data_224x224_inception)) {
-		printf("ERROR: vxCreateTensor() failed for data\n");
-		return -1;
-	}
+	ERROR_CHECK_OBJECT(data_224x224_inception);
+
 	vx_tensor data_224x224_resnet = vxCreateTensor(context, 4, dims_data_224X224, VX_TYPE_FLOAT32, 0);
-	if (vxGetStatus((vx_reference)data_224x224_resnet)) {
-		printf("ERROR: vxCreateTensor() failed for data\n");
-		return -1;
-	}
+	ERROR_CHECK_OBJECT(data_224x224_resnet);
+
 	vx_tensor data_224x224_vgg19 = vxCreateTensor(context, 4, dims_data_224X224, VX_TYPE_FLOAT32, 0);
-	if (vxGetStatus((vx_reference)data_224x224_vgg19)) {
-		printf("ERROR: vxCreateTensor() failed for data\n");
-		return -1;
-	}
+	ERROR_CHECK_OBJECT(data_224x224_vgg19);
+
 	vx_tensor data_224x224_googlenet = vxCreateTensor(context, 4, dims_data_224X224, VX_TYPE_FLOAT32, 0);
-	if (vxGetStatus((vx_reference)data_224x224_googlenet)) {
-		printf("ERROR: vxCreateTensor() failed for data\n");
-		return -1;
-	}
+	ERROR_CHECK_OBJECT(data_224x224_googlenet);
+
 	vx_tensor data_224x224_squeezenet = vxCreateTensor(context, 4, dims_data_224X224, VX_TYPE_FLOAT32, 0);
-	if (vxGetStatus((vx_reference)data_224x224_squeezenet)) {
-		printf("ERROR: vxCreateTensor() failed for data\n");
-		return -1;
-	}
+	ERROR_CHECK_OBJECT(data_224x224_squeezenet);
+
 	vx_tensor data_224x224_densenet121 = vxCreateTensor(context, 4, dims_data_224X224, VX_TYPE_FLOAT32, 0);
-	if (vxGetStatus((vx_reference)data_224x224_densenet121)) {
-		printf("ERROR: vxCreateTensor() failed for data\n");
-		return -1;
-	}
+	ERROR_CHECK_OBJECT(data_224x224_densenet121);
+
 	vx_tensor data_224x224_zfnet512 = vxCreateTensor(context, 4, dims_data_224X224, VX_TYPE_FLOAT32, 0);
-	if (vxGetStatus((vx_reference)data_224x224_zfnet512)) {
-		printf("ERROR: vxCreateTensor() failed for data\n");
-		return -1;
-	}
+	ERROR_CHECK_OBJECT(data_224x224_zfnet512);
+
 
 
 	// create output tensor prob
@@ -389,40 +353,25 @@ int main(int argc, const char ** argv)
 	vx_size dims_prob_2[4] = { 1, 1000, 1, 1 };
 
 	vx_tensor prob_inception = vxCreateTensor(context, 2, dims_prob, VX_TYPE_FLOAT32, 0);
-	if (vxGetStatus((vx_reference)prob_inception)) {
-		printf("ERROR: vxCreateTensor() failed for prob\n");
-		return -1;
-	}
+	ERROR_CHECK_OBJECT(prob_inception);
+
 	vx_tensor prob_resnet = vxCreateTensor(context, 2, dims_prob, VX_TYPE_FLOAT32, 0);
-	if (vxGetStatus((vx_reference)prob_resnet)) {
-		printf("ERROR: vxCreateTensor() failed for prob\n");
-		return -1;
-	}
+	ERROR_CHECK_OBJECT(prob_resnet);
+
 	vx_tensor prob_vgg19 = vxCreateTensor(context, 2, dims_prob, VX_TYPE_FLOAT32, 0);
-	if (vxGetStatus((vx_reference)prob_vgg19)) {
-		printf("ERROR: vxCreateTensor() failed for prob\n");
-		return -1;
-	}
+	ERROR_CHECK_OBJECT(prob_vgg19);
+
 	vx_tensor prob_googlenet = vxCreateTensor(context, 2, dims_prob, VX_TYPE_FLOAT32, 0);
-	if (vxGetStatus((vx_reference)prob_googlenet)) {
-		printf("ERROR: vxCreateTensor() failed for prob\n");
-		return -1;
-	}
+	ERROR_CHECK_OBJECT(prob_googlenet);
+
 	vx_tensor prob_squeezenet = vxCreateTensor(context, 4, dims_prob_2, VX_TYPE_FLOAT32, 0);
-	if (vxGetStatus((vx_reference)prob_squeezenet)) {
-		printf("ERROR: vxCreateTensor() failed for prob\n");
-		return -1;
-	}
+	ERROR_CHECK_OBJECT(prob_squeezenet);
+
 	vx_tensor prob_densenet121 = vxCreateTensor(context, 4, dims_prob_2, VX_TYPE_FLOAT32, 0);
-	if (vxGetStatus((vx_reference)prob_densenet121)) {
-		printf("ERROR: vxCreateTensor() failed for prob\n");
-		return -1;
-	}
+	ERROR_CHECK_OBJECT(prob_densenet121);
+
 	vx_tensor prob_zfnet512 = vxCreateTensor(context, 2, dims_prob, VX_TYPE_FLOAT32, 0);
-	if (vxGetStatus((vx_reference)prob_zfnet512)) {
-		printf("ERROR: vxCreateTensor() failed for prob\n");
-		return -1;
-	}
+	ERROR_CHECK_OBJECT(prob_zfnet512);
 
 
 	const char * inceptionV2_inputTensorName = "data_0";
@@ -451,73 +400,119 @@ int main(int argc, const char ** argv)
 	}
 	vx_node MIVisionX_resnet = vxExtWinMLNode_OnnxToMivisionX(graph_resnet, (vx_scalar)onnxModel_resnet, (vx_scalar)resnet50_inputTensorName, (vx_scalar)resnet50_outputTensorName, data_224x224_resnet, prob_resnet, NULL);
 	if (vxGetStatus((vx_reference)MIVisionX_resnet)) {
-		printf("ERROR: inception OnnxToMivisionX() failed (%d)\n", status);
+		printf("ERROR: resnet50 OnnxToMivisionX() failed (%d)\n", status);
 		return -1;
 	}
 	vx_node MIVisionX_vgg19 = vxExtWinMLNode_OnnxToMivisionX(graph_vgg19, (vx_scalar)onnxModel_vgg, (vx_scalar)vgg19_inputTensorName, (vx_scalar)vgg19_outputTensorName, data_224x224_vgg19, prob_vgg19, NULL);
 	if (vxGetStatus((vx_reference)MIVisionX_vgg19)) {
-		printf("ERROR: inception OnnxToMivisionX() failed (%d)\n", status);
+		printf("ERROR: vgg19 OnnxToMivisionX() failed (%d)\n", status);
 		return -1;
 	}
 	vx_node MIVisionX_googlenet = vxExtWinMLNode_OnnxToMivisionX(graph_googlenet, (vx_scalar)onnxModel_googlenet, (vx_scalar)googlenet_inputTensorName, (vx_scalar)googlenet_outputTensorName, data_224x224_googlenet, prob_googlenet, NULL);
 	if (vxGetStatus((vx_reference)MIVisionX_googlenet)) {
-		printf("ERROR: inception OnnxToMivisionX() failed (%d)\n", status);
+		printf("ERROR: googlenet OnnxToMivisionX() failed (%d)\n", status);
 		return -1;
 	}
 	vx_node MIVisionX_squeezenet = vxExtWinMLNode_OnnxToMivisionX(graph_squeezenet, (vx_scalar)onnxModel_squeezenet, (vx_scalar)squeezenet_inputTensorName, (vx_scalar)squeezenet_outputTensorName, data_224x224_squeezenet, prob_squeezenet , NULL);
 	if (vxGetStatus((vx_reference)MIVisionX_squeezenet)) {
-		printf("ERROR: inception OnnxToMivisionX() failed (%d)\n", status);
+		printf("ERROR: squeezenet OnnxToMivisionX() failed (%d)\n", status);
 		return -1;
 	}
 	vx_node MIVisionX_densenet121 = vxExtWinMLNode_OnnxToMivisionX(graph_densenet121, (vx_scalar)onnxModel_densenet121, (vx_scalar)densenet121_inputTensorName, (vx_scalar)densenet121_outputTensorName, data_224x224_densenet121, prob_densenet121, NULL);
 	if (vxGetStatus((vx_reference)MIVisionX_densenet121)) {
-		printf("ERROR: inception OnnxToMivisionX() failed (%d)\n", status);
+		printf("ERROR: densenet121 OnnxToMivisionX() failed (%d)\n", status);
 		return -1;
 	}
 	vx_node MIVisionX_zfnet512 = vxExtWinMLNode_OnnxToMivisionX(graph_zfnet512, (vx_scalar)onnxModel_zfnet512, (vx_scalar)zfnet512_inputTensorName, (vx_scalar)zfnet512_outputTensorName , data_224x224_zfnet512, prob_zfnet512, NULL);
 	if (vxGetStatus((vx_reference)MIVisionX_zfnet512)) {
-		printf("ERROR: inception OnnxToMivisionX() failed (%d)\n", status);
+		printf("ERROR: zfnet512 OnnxToMivisionX() failed (%d)\n", status);
 		return -1;
 	}
 
 	t1 = clockCounter();
-	printf("OK:graph initialization with vxExtWinMLNode_OnnxToMivisionX() took %.3f msec (1st iteration)\n", (float)(t1 - t0)*1000.0f / (float)freq);
+	printf("OK:node initialization with vxExtWinMLNode_OnnxToMivisionX() took %.3f msec (1st iteration)\n", (float)(t1 - t0)*1000.0f / (float)freq);
 
+
+	t0 = clockCounter();
+	status = vxVerifyGraph(graph_inception);
+    if(status) {
+        printf("ERROR: inception vxVerifyGraph(...) failed (%d)\n", status);
+        return -1;
+    }
+
+    status = vxVerifyGraph(graph_resnet);
+    if(status) {
+        printf("ERROR: resnet50 vxVerifyGraph(...) failed (%d)\n", status);
+        return -1;
+    }
+
+    status = vxVerifyGraph(graph_vgg19);
+    if(status) {
+        printf("ERROR: vgg19 vxVerifyGraph(...) failed (%d)\n", status);
+        return -1;
+    }
+
+    status = vxVerifyGraph(graph_googlenet);
+    if(status) {
+        printf("ERROR: googlenet vxVerifyGraph(...) failed (%d)\n", status);
+        return -1;
+    }
+
+    status = vxVerifyGraph(graph_squeezenet);
+    if(status) {
+        printf("ERROR: squeezenet vxVerifyGraph(...) failed (%d)\n", status);
+        return -1;
+    }
+
+    status = vxVerifyGraph(graph_densenet121);
+    if(status) {
+        printf("ERROR: densenet121 vxVerifyGraph(...) failed (%d)\n", status);
+        return -1;
+    }
+
+    status = vxVerifyGraph(graph_zfnet512);
+    if(status) {
+        printf("ERROR: zfnet512 vxVerifyGraph(...) failed (%d)\n", status);
+        return -1;
+    }
+
+    t1 = clockCounter();
+    printf("OK: vxVerifyGraph() took %.3f msec (1st iteration)\n", (float)(t1-t0)*1000.0f/(float)freq);
 
 	t0 = clockCounter();
     status = vxProcessGraph(graph_inception);
     if(status != VX_SUCCESS) {
-        printf("ERROR: vxProcessGraph() failed (%d)\n", status);
+        printf("ERROR: inceptionv2 vxProcessGraph() failed (%d)\n", status);
         return -1;
     }
     status = vxProcessGraph(graph_resnet);
     if(status != VX_SUCCESS) {
-        printf("ERROR: vxProcessGraph() failed (%d)\n", status);
+        printf("ERROR: resnet50 vxProcessGraph() failed (%d)\n", status);
         return -1;
     }
     status = vxProcessGraph(graph_vgg19);
     if(status != VX_SUCCESS) {
-        printf("ERROR: vxProcessGraph() failed (%d)\n", status);
+        printf("ERROR: vgg19 vxProcessGraph() failed (%d)\n", status);
         return -1;
     }
     status = vxProcessGraph(graph_googlenet);
     if(status != VX_SUCCESS) {
-        printf("ERROR: vxProcessGraph() failed (%d)\n", status);
+        printf("ERROR: googlenet vxProcessGraph() failed (%d)\n", status);
         return -1;
     }
     status = vxProcessGraph(graph_squeezenet);
     if(status != VX_SUCCESS) {
-        printf("ERROR: vxProcessGraph() failed (%d)\n", status);
+        printf("ERROR: squeezenet vxProcessGraph() failed (%d)\n", status);
         return -1;
     }
     status = vxProcessGraph(graph_densenet121);
     if(status != VX_SUCCESS) {
-        printf("ERROR: vxProcessGraph() failed (%d)\n", status);
+        printf("ERROR: densenet121 vxProcessGraph() failed (%d)\n", status);
         return -1;
     }
     status = vxProcessGraph(graph_zfnet512);
     if(status != VX_SUCCESS) {
-        printf("ERROR: vxProcessGraph() failed (%d)\n", status);
+        printf("ERROR: zfnet512 vxProcessGraph() failed (%d)\n", status);
         return -1;
     }
     t1 = clockCounter();
