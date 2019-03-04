@@ -24,15 +24,15 @@ make
 ### Run
 ```
 Usage: ./classifier
-        "--inception  <inceptionV4-weights.bin>  [optional]
-        "--resnet50   <resnet50-weights.bin> [optional]
-        "--vgg16      <vgg16-weights.bin> [optional]
-        "--googlenet  <googlenet-weights.bin> [optional]
-        "--resnet101  <resnet101-weights.bin> [optional]
-        "--resnet152  <resnet152-weights.bin> [optional]
-        "--vgg19      <vgg19-weights.bin> [optional]
-        "--label      <label text> [required]
-        "--video <video file>/--capture <0>[required]
+        --inception  <inceptionV4-weights.bin>  [optional]
+        --resnet50   <resnet50-weights.bin> [optional]
+        --vgg16      <vgg16-weights.bin> [optional]
+        --googlenet  <googlenet-weights.bin> [optional]
+        --resnet101  <resnet101-weights.bin> [optional]
+        --resnet152  <resnet152-weights.bin> [optional]
+        --vgg19      <vgg19-weights.bin> [optional]
+        --label      <label text> [required]
+        --video <video file>/--capture <0>[required]
 ```
 
 #### weights.bin
