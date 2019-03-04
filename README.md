@@ -70,6 +70,6 @@ If you want to test with a live cam, turn on this option.
 
 ### Example
 ```
-./classifier --resnet50 PATH/TO/weights.bin --vgg16 PATH/TO/weights.bin --inception PATH/TO/weights.bin --vgg19 PATH/TO/weights.bin --googlenet PATH/TO/weights.bin --resnet101 PATH/TO/weights.bin --resnet152 PATH/TO/weights.bin --label data/labels.txt --capture 0
+./classifier --resnet50 PATH/TO/resnet50/weights.bin --vgg16 PATH/TO/vgg16/weights.bin --inception PATH/TO/inception/weights.bin --vgg19 PATH/TO/vgg19/weights.bin --googlenet PATH/TO/googlenet/weights.bin --resnet101 PATH/TO/resnet101/weights.bin --resnet152 PATH/TO/resnet152/weights.bin --label data/labels.txt --capture 0
 
 ```
