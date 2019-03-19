@@ -32,7 +32,7 @@ Usage: ./classifier
         --resnet152  <resnet152-weights.bin> [optional]
         --vgg19      <vgg19-weights.bin> [optional]
         --label      <label text> [required]
-        --video <video file>/--capture <0>[required]
+        [--video <video file>]/[--capture <0>][required]
 ```
 
 #### weights.bin
