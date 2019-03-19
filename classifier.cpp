@@ -246,10 +246,9 @@ static void show_usage()
         );
 }
 
-
 int main(int argc, const char ** argv)
 {
-    // check command-line usage   
+    // check command-line usage
     std::string binaryFilename_inception_str = "empty";
     std::string binaryFilename_resnet_str = "empty";
     std::string binaryFilename_vgg_str = "empty";
@@ -436,7 +435,7 @@ int main(int argc, const char ** argv)
     // create context, input, output, and graph
     vxRegisterLogCallback(NULL, log_callback, vx_false_e);
     vx_context context = vxCreateContext();
-    status = vxGetStatus((vx_reference)context);
+    vx_status status = vxGetStatus((vx_reference)context);
     if(status) {
         printf("ERROR: vxCreateContext() failed\n");
         return -1;
@@ -546,108 +545,84 @@ int main(int argc, const char ** argv)
 
     // build graph using annmodule
     int64_t freq = clockFrequency(), t0, t1;
-    char binaryFilename_inception[1024], binaryFilename_resnet[1024], binaryFilename_resnet101[1024], binaryFilename_vgg[1024], binaryFilename_googlenet[1024], binaryFilename_resnet152[1024], binaryFilename_vgg19[1024];
-    strcpy(binaryFilename_inception, binaryFilename_inception_str.c_str());
-    strcpy(binaryFilename_resnet, binaryFilename_resnet_str.c_str());
-    strcpy(binaryFilename_vgg, binaryFilename_vgg_str.c_str());
-    strcpy(binaryFilename_googlenet, binaryFilename_googlenet_str.c_str());
-    strcpy(binaryFilename_resnet101, binaryFilename_resnet101_str.c_str());
-    strcpy(binaryFilename_resnet152, binaryFilename_resnet152_str.c_str());
-    strcpy(binaryFilename_vgg19, binaryFilename_vgg19_str.c_str());
     t0 = clockCounter();
 
-    if(binaryFilename_inception_str != "empty"){
-    	status = annAddToGraph_inception(graph_inception, data_299x299, prob_inception, binaryFilename_inception);
-	    if(status) {
-	        printf("ERROR: inception annAddToGraph() failed (%d)\n", status);
-	        return -1;
-	    }
-	    status = vxVerifyGraph(graph_inception);
-	    if(status) {
-	        printf("ERROR: inception vxVerifyGraph(...) failed (%d)\n", status);
-	        return -1;
-    	}
+    status = annAddToGraph_inception(graph_inception, data_299x299, prob_inception, binaryFilename_inception);
+    if(status) {
+        printf("ERROR: inception annAddToGraph() failed (%d)\n", status);
+        return -1;
     }
-   
-    if(binaryFilename_resnet_str != "empty"){
-    	status = annAddToGraph_resnet(graph_resnet, data_224x224, prob_resnet, binaryFilename_resnet);
-	    if(status) {
-	        printf("ERROR: resnet annAddToGraph() failed (%d)\n", status);
-	        return -1;
-	    }
-	    status = vxVerifyGraph(graph_resnet);
-	    if(status) {
-	        printf("ERROR: resnet vxVerifyGraph(...) failed (%d)\n", status);
-	        return -1;
-	    }
+    status = vxVerifyGraph(graph_inception);
+    if(status) {
+        printf("ERROR: inception vxVerifyGraph(...) failed (%d)\n", status);
+        return -1;
     }
-    
-    if(binaryFilename_vgg_str != "empty"){
-    	status = annAddToGraph_vgg(graph_vgg, data_224x224, prob_vgg, binaryFilename_vgg);
-	    if(status) {
-	        printf("ERROR: vgg annAddToGraph() failed (%d)\n", status);
-	        return -1;
-	    }
-	    status = vxVerifyGraph(graph_vgg);
-	    if(status) {
-	        printf("ERROR: vgg vxVerifyGraph(...) failed (%d)\n", status);
-	        return -1;
-	    }
-    }
-    
-    if(binaryFilename_googlenet_str != "empty"){
-    	status = annAddToGraph_googleNet(graph_googlenet, data_224x224, prob_googlenet, binaryFilename_googlenet);
-	    if(status) {
-	        printf("ERROR: googlenet annAddToGraph() failed (%d)\n", status);
-	        return -1;
-	    }
-	    status = vxVerifyGraph(graph_googlenet);
-	    if(status) {
-	        printf("ERROR: googlenet vxVerifyGraph(...) failed (%d)\n", status);
-	        return -1;
-	    }
-    }
-    
 
-    if(binaryFilename_resnet101_str != "empty"){
-    	 status = annAddToGraph_resnet101(graph_resnet101, data_224x224, prob_resnet101, binaryFilename_resnet101);
-	    if(status) {
-	        printf("ERROR: resnet101 annAddToGraph() failed (%d)\n", status);
-	        return -1;
-	    }
-	    status = vxVerifyGraph(graph_resnet101);
-	    if(status) {
-	        printf("ERROR: resnet101 vxVerifyGraph(...) failed (%d)\n", status);
-	        return -1;
-	    }
+    status = annAddToGraph_resnet(graph_resnet, data_224x224, prob_resnet, binaryFilename_resnet);
+    if(status) {
+        printf("ERROR: resnet annAddToGraph() failed (%d)\n", status);
+        return -1;
     }
-   
-    if(binaryFilename_resnet152_str != "empty"){
-    	status = annAddToGraph_resnet152(graph_resnet152, data_224x224, prob_resnet152, binaryFilename_resnet152);
-	    if(status) {
-	        printf("ERROR: resnet152 annAddToGraph() failed (%d)\n", status);
-	        return -1;
-	    }
-	    status = vxVerifyGraph(graph_resnet152);
-	    if(status) {
-	        printf("ERROR: resnet`52 vxVerifyGraph(...) failed (%d)\n", status);
-	        return -1;
-	    }
+    status = vxVerifyGraph(graph_resnet);
+    if(status) {
+        printf("ERROR: resnet vxVerifyGraph(...) failed (%d)\n", status);
+        return -1;
     }
-    
-    if(binaryFilename_vgg19_str != "empty"){
-    	status = annAddToGraph_vgg19(graph_vgg19, data_224x224, prob_vgg19, binaryFilename_vgg19);
-	    if(status) {
-	        printf("ERROR: vgg19 annAddToGraph() failed (%d)\n", status);
-	        return -1;
-	    }
-	    status = vxVerifyGraph(graph_vgg);
-	    if(status) {
-	        printf("ERROR: vgg19 vxVerifyGraph(...) failed (%d)\n", status);
-	        return -1;
-	    }
+
+    status = annAddToGraph_vgg(graph_vgg, data_224x224, prob_vgg, binaryFilename_vgg);
+    if(status) {
+        printf("ERROR: vgg annAddToGraph() failed (%d)\n", status);
+        return -1;
     }
-    
+    status = vxVerifyGraph(graph_vgg);
+    if(status) {
+        printf("ERROR: vgg vxVerifyGraph(...) failed (%d)\n", status);
+        return -1;
+    }
+
+    status = annAddToGraph_googleNet(graph_googlenet, data_224x224, prob_googlenet, binaryFilename_googlenet);
+    if(status) {
+        printf("ERROR: googlenet annAddToGraph() failed (%d)\n", status);
+        return -1;
+    }
+    status = vxVerifyGraph(graph_googlenet);
+    if(status) {
+        printf("ERROR: googlenet vxVerifyGraph(...) failed (%d)\n", status);
+        return -1;
+    }
+
+    status = annAddToGraph_resnet101(graph_resnet101, data_224x224, prob_resnet101, binaryFilename_resnet101);
+    if(status) {
+        printf("ERROR: resnet101 annAddToGraph() failed (%d)\n", status);
+        return -1;
+    }
+    status = vxVerifyGraph(graph_resnet101);
+    if(status) {
+        printf("ERROR: resnet101 vxVerifyGraph(...) failed (%d)\n", status);
+        return -1;
+    }
+
+    status = annAddToGraph_resnet152(graph_resnet152, data_224x224, prob_resnet152, binaryFilename_resnet152);
+    if(status) {
+        printf("ERROR: resnet152 annAddToGraph() failed (%d)\n", status);
+        return -1;
+    }
+    status = vxVerifyGraph(graph_resnet152);
+    if(status) {
+        printf("ERROR: resnet`52 vxVerifyGraph(...) failed (%d)\n", status);
+        return -1;
+    }
+
+    status = annAddToGraph_vgg19(graph_vgg19, data_224x224, prob_vgg19, binaryFilename_vgg19);
+    if(status) {
+        printf("ERROR: vgg19 annAddToGraph() failed (%d)\n", status);
+        return -1;
+    }
+    status = vxVerifyGraph(graph_vgg);
+    if(status) {
+        printf("ERROR: vgg19 vxVerifyGraph(...) failed (%d)\n", status);
+        return -1;
+    }
 
     t1 = clockCounter();
     printf("OK: graph initialization with annAddToGraph() took %.3f msec\n", (float)(t1-t0)*1000.0f/(float)freq);
@@ -1227,43 +1202,43 @@ int main(int argc, const char ** argv)
             modelName6 = modelName6 + resnet152Text;
             modelName7 = modelName7 + vgg19Text;
             int red, green, blue;
-            if(runInception && binaryFilename_inception_str != "empty")
+            if(runInception)
             {
                 red = (colors[0][2]); green = (colors[0][1]); blue = (colors[0][0]) ;
                 putText(outputDisplay, modelName1, Point(20, (l * 40) + 30), fontFace, fontScale, Scalar(red,green,blue), thickness,8);
                 l++;
             }
-            if(runResnet50 && binaryFilename_resnet_str != "empty")
+            if(runResnet50)
             {
                 red = (colors[1][2]); green = (colors[1][1]); blue = (colors[1][0]) ;
                 putText(outputDisplay, modelName2, Point(20, (l * 40) + 30), fontFace, fontScale, Scalar(red,green,blue), thickness,8);
                 l++;
             }
-            if(runVgg16 && binaryFilename_vgg_str != "empty")
+            if(runVgg16)
             {
                 red = (colors[2][2]); green = (colors[2][1]); blue = (colors[2][0]) ;
                 putText(outputDisplay, modelName3, Point(20, (l * 40) + 30), fontFace, fontScale, Scalar(red,green,blue), thickness,8);
                 l++;
             }
-            if(runGooglenet && binaryFilename_googlenet_str != "empty")
+            if(runGooglenet)
             {
                 red = (colors[3][2]); green = (colors[3][1]); blue = (colors[3][0]) ;
                 putText(outputDisplay, modelName4, Point(20, (l * 40) + 30), fontFace, fontScale, Scalar(red,green,blue), thickness,8);
                 l++;
             }
-            if(runResnet101 && binaryFilename_resnet101_str != "empty")
+            if(runResnet101)
             {
                 red = (colors[4][2]); green = (colors[4][1]); blue = (colors[4][0]) ;
                 putText(outputDisplay, modelName5, Point(20, (l * 40) + 30), fontFace, fontScale, Scalar(red,green,blue), thickness,8);
                 l++;
             }
-            if(runResnet152 && binaryFilename_resnet152_str != "empty")
+            if(runResnet152)
             {
                 red = (colors[5][2]); green = (colors[5][1]); blue = (colors[5][0]) ;
                 putText(outputDisplay, modelName6, Point(20, (l * 40) + 30), fontFace, fontScale, Scalar(red,green,blue), thickness,8);
                 l++;
             }
-            if(runVgg19 && binaryFilename_vgg19--_str != "empty")
+            if(runVgg19)
             {
                 red = (colors[6][2]); green = (colors[6][1]); blue = (colors[6][0]) ;
                 putText(outputDisplay, modelName7, Point(20, (l * 40) + 30), fontFace, fontScale, Scalar(red,green,blue), thickness,8);
