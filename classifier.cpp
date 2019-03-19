@@ -249,65 +249,7 @@ static void show_usage()
 
 int main(int argc, const char ** argv)
 {
-    // check command-line usage
-    /*
-    
-    if(argc < 8) {
-        printf(
-            "\n"
-            "Usage: ./classifier <inceptionV4 weights.bin> <resnet50 weights.bin> <vgg16 weights.bin> <googlenet weights.bin> "
-            "<resnet101 weights.bin> <resnet152 weights.bin> <vgg19 weights.bin> [ --label <label text> --video <video file>/<--capture 0> ] \n"
-            "\n"
-        );
-        return -1;
-    }
-    const char * binaryFilename_inception = argv[1];
-    const char * binaryFilename_resnet = argv[2];
-    const char * binaryFilename_vgg = argv[3];
-    const char * binaryFilename_googlenet = argv[4];
-    const char * binaryFilename_resnet101 = argv[5];
-    const char * binaryFilename_resnet152 = argv[6];
-    const char * binaryFilename_vgg19 = argv[7];
-
-    argc -= 8;
-    argv += 8;
-
-    std::string videoFile = "empty";
-    std::string labelFileName = "empty";
-    std::string labelText[1000];
-    int captureID = -1;
-
-    bool captureFromVideo = false;
-
-    if (argc && !strcasecmp(*argv, "--label"))
-    {
-        argc--;
-        argv++;
-        labelFileName = *argv;
-        std::string line;
-        std::ifstream out(labelFileName);
-        int lineNum = 0;
-        while(getline(out, line)) {
-            labelText[lineNum] = line;
-            lineNum++;
-        }
-        out.close();
-        argc--;
-        argv++;
-    }
-    if (argc && !strcasecmp(*argv, "--video"))
-    {
-        argv++;
-        videoFile = *argv;
-        captureFromVideo = true;
-    }
-    else if (argc && !strcasecmp(*argv, "--capture"))
-    {
-        argv++;
-        captureID = atoi(*argv);
-    }
-    */
-    
+    // check command-line usage   
     std::string binaryFilename_inception_str = "empty";
     std::string binaryFilename_resnet_str = "empty";
     std::string binaryFilename_vgg_str = "empty";
