@@ -23,8 +23,16 @@ make
 ````
 ### Run
 ```
-Usage: ./classifier <inceptionV4 weights.bin> <resnet50 weights.bin> <vgg16 weights.bin> <googlenet weights.bin> <resnet101 weights.bin> <resnet152 weights.bin> <vgg19 weights.bin> 
-[ --label <label text> --video <video file>/<--capture 0> ] 
+Usage: ./classifier 
+        --inception <inceptionV4 weights.bin> [optional]
+        --resnet50 <resnet50 weights.bin>     [optional]
+        --vgg16 <vgg16 weights.bin>           [optional]
+        --googlenet <googlenet weights.bin>   [optional]
+        --resnet101 <resnet101 weights.bin>   [optional]
+        --resnet152 <resnet152 weights.bin>   [optional]
+        --vgg19 <vgg19 weights.bin>           [optional]
+        --label <label text>                  [required]
+        --video <video file>/<--capture 0>    [required]
 ```
 
 #### weights.bin
@@ -62,6 +70,7 @@ If you want to test with a live cam, turn on this option.
 
 ### Example
 ```
-./classifier /PATH/TO/inceptionV4/weights.bin /PATH/TO/resnet50/weights.bin /PATH/TO/vgg16/weights.bin ... 
-.../PATH/TO/vgg19/weights.bin --label labels.txt --capture 0
+./classifier --inception /PATH/TO/inceptionV4/weights.bin --resnet50/PATH/TO/resnet50/weights.bin ...
+...
+--vgg19 /PATH/TO/vgg19/weights.bin --label labels.txt --capture 0
 ```
