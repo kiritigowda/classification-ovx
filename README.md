@@ -72,5 +72,7 @@ If you want to test with a live cam, turn on this option.
 ```
 ./classifier --inception /PATH/TO/inceptionV4/weights.bin --resnet50/PATH/TO/resnet50/weights.bin ...
 ...
---vgg19 /PATH/TO/vgg19/weights.bin --label labels.txt --capture 0
+--vgg19 /PATH/TO/vgg19/weights.bin 
+--label labels.txt
+--capture 0
 ```
