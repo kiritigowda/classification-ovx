@@ -609,48 +609,6 @@ int main(int argc, const char ** argv)
             return -1;
         }
     }
-    
-
-    if(binaryFilename_resnet101_str != "empty"){
-         status = annAddToGraph_resnet101(graph_resnet101, data_224x224, prob_resnet101, binaryFilename_resnet101);
-=======
-    }
-    if(binaryFilename_resnet_str != "empty"){
-        status = annAddToGraph_resnet(graph_resnet, data_224x224, prob_resnet, binaryFilename_resnet);
-        if(status) {
-            printf("ERROR: resnet annAddToGraph() failed (%d)\n", status);
-            return -1;
-        }
-        status = vxVerifyGraph(graph_resnet);
-        if(status) {
-            printf("ERROR: resnet vxVerifyGraph(...) failed (%d)\n", status);
-            return -1;
-        }
-    }
-    if(binaryFilename_vgg_str != "empty"){
-        status = annAddToGraph_vgg(graph_vgg, data_224x224, prob_vgg, binaryFilename_vgg);
-        if(status) {
-            printf("ERROR: vgg annAddToGraph() failed (%d)\n", status);
-            return -1;
-        }
-        status = vxVerifyGraph(graph_vgg);
-        if(status) {
-            printf("ERROR: vgg vxVerifyGraph(...) failed (%d)\n", status);
-            return -1;
-        }
-    }
-    if(binaryFilename_googlenet_str != "empty"){
-        status = annAddToGraph_googleNet(graph_googlenet, data_224x224, prob_googlenet, binaryFilename_googlenet);
-        if(status) {
-            printf("ERROR: googlenet annAddToGraph() failed (%d)\n", status);
-            return -1;
-        }
-        status = vxVerifyGraph(graph_googlenet);
-        if(status) {
-            printf("ERROR: googlenet vxVerifyGraph(...) failed (%d)\n", status);
-            return -1;
-        }
-    }
     if(binaryFilename_resnet101_str != "empty"){
         status = annAddToGraph_resnet101(graph_resnet101, data_224x224, prob_resnet101, binaryFilename_resnet101);
         if(status) {
