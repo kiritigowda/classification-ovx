@@ -246,7 +246,6 @@ static void show_usage()
         );
 }
 
-
 int main(int argc, const char ** argv)
 {
     // check command-line usage   
@@ -384,14 +383,15 @@ int main(int argc, const char ** argv)
             arg++;
             labelFileName = (argv[arg]);
             std::string line;
-            std::ifstream out(labelFileName);
-            int lineNum = 0;
-            while(getline(out, line)) {
-                labelText[lineNum] = line;
-                lineNum++;
-            }
-            out.close();
-            parameter++;
+	        std::ifstream out(labelFileName);
+	        int lineNum = 0;
+	        while(getline(out, line)) {
+	            labelText[lineNum] = line;
+	            lineNum++;
+	        }
+	        out.close();
+	        parameter++;
+
         }
 
         else if (!strcasecmp(argv[arg], "--video") || !strcasecmp(argv[arg], "--V") || !strcasecmp(argv[arg], "--v"))
@@ -554,8 +554,9 @@ int main(int argc, const char ** argv)
     strcpy(binaryFilename_resnet101, binaryFilename_resnet101_str.c_str());
     strcpy(binaryFilename_resnet152, binaryFilename_resnet152_str.c_str());
     strcpy(binaryFilename_vgg19, binaryFilename_vgg19_str.c_str());
-    t0 = clockCounter();
 
+    t0 = clockCounter();
+  
     if(binaryFilename_inception_str != "empty"){
         status = annAddToGraph_inception(graph_inception, data_299x299, prob_inception, binaryFilename_inception);
         if(status) {
@@ -567,6 +568,7 @@ int main(int argc, const char ** argv)
             printf("ERROR: inception vxVerifyGraph(...) failed (%d)\n", status);
             return -1;
         }
+
     }
    
     if(binaryFilename_resnet_str != "empty"){
@@ -611,6 +613,46 @@ int main(int argc, const char ** argv)
 
     if(binaryFilename_resnet101_str != "empty"){
          status = annAddToGraph_resnet101(graph_resnet101, data_224x224, prob_resnet101, binaryFilename_resnet101);
+=======
+    }
+    if(binaryFilename_resnet_str != "empty"){
+        status = annAddToGraph_resnet(graph_resnet, data_224x224, prob_resnet, binaryFilename_resnet);
+        if(status) {
+            printf("ERROR: resnet annAddToGraph() failed (%d)\n", status);
+            return -1;
+        }
+        status = vxVerifyGraph(graph_resnet);
+        if(status) {
+            printf("ERROR: resnet vxVerifyGraph(...) failed (%d)\n", status);
+            return -1;
+        }
+    }
+    if(binaryFilename_vgg_str != "empty"){
+        status = annAddToGraph_vgg(graph_vgg, data_224x224, prob_vgg, binaryFilename_vgg);
+        if(status) {
+            printf("ERROR: vgg annAddToGraph() failed (%d)\n", status);
+            return -1;
+        }
+        status = vxVerifyGraph(graph_vgg);
+        if(status) {
+            printf("ERROR: vgg vxVerifyGraph(...) failed (%d)\n", status);
+            return -1;
+        }
+    }
+    if(binaryFilename_googlenet_str != "empty"){
+        status = annAddToGraph_googleNet(graph_googlenet, data_224x224, prob_googlenet, binaryFilename_googlenet);
+        if(status) {
+            printf("ERROR: googlenet annAddToGraph() failed (%d)\n", status);
+            return -1;
+        }
+        status = vxVerifyGraph(graph_googlenet);
+        if(status) {
+            printf("ERROR: googlenet vxVerifyGraph(...) failed (%d)\n", status);
+            return -1;
+        }
+    }
+    if(binaryFilename_resnet101_str != "empty"){
+        status = annAddToGraph_resnet101(graph_resnet101, data_224x224, prob_resnet101, binaryFilename_resnet101);
         if(status) {
             printf("ERROR: resnet101 annAddToGraph() failed (%d)\n", status);
             return -1;
@@ -621,7 +663,7 @@ int main(int argc, const char ** argv)
             return -1;
         }
     }
-   
+
     if(binaryFilename_resnet152_str != "empty"){
         status = annAddToGraph_resnet152(graph_resnet152, data_224x224, prob_resnet152, binaryFilename_resnet152);
         if(status) {
@@ -634,7 +676,7 @@ int main(int argc, const char ** argv)
             return -1;
         }
     }
-    
+
     if(binaryFilename_vgg19_str != "empty"){
         status = annAddToGraph_vgg19(graph_vgg19, data_224x224, prob_vgg19, binaryFilename_vgg19);
         if(status) {
@@ -647,7 +689,6 @@ int main(int argc, const char ** argv)
             return -1;
         }
     }
-    
 
     t1 = clockCounter();
     printf("OK: graph initialization with annAddToGraph() took %.3f msec\n", (float)(t1-t0)*1000.0f/(float)freq);
