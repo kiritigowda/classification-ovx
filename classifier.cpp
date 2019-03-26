@@ -50,7 +50,6 @@ using namespace cv;
 
 #define MIVisionX_LEGEND "MIVisionX Image Classification"
 
-
 unsigned char colors[20][3] = {
 	{ 0,255,0 },
 { 0, 0,255 },
@@ -251,14 +250,14 @@ int main(int argc, const char ** argv)
 
 	argc -= 8;
 	argv += 8;
-	
+
 	std::string videoFile = "empty";
 	std::string labelFileName = "empty";
 	std::string labelText[1000];
 	int captureID = -1;
 
 	bool captureFromVideo = false;
-	
+
 	if (argc && !strcasecmp(*argv, "--label"))
 	{
 		argc--;
@@ -418,7 +417,7 @@ int main(int argc, const char ** argv)
 	vx_tensor data_224x224_squeezenet = vxCreateTensor(context, 4, dims_data_224X224, VX_TYPE_FLOAT32, 0);
 	ERROR_CHECK_OBJECT(data_224x224_squeezenet);
 	vx_tensor data_224x224_densenet121 = vxCreateTensor(context, 4, dims_data_224X224, VX_TYPE_FLOAT32, 0);
-	ERROR_CHECK_OBJECT(data_224x224_densenet121); 
+	ERROR_CHECK_OBJECT(data_224x224_densenet121);
 	vx_tensor data_224x224_inception = vxCreateTensor(context, 4, dims_data_224X224, VX_TYPE_FLOAT32, 0);
 	ERROR_CHECK_OBJECT(data_224x224_inception);
 	vx_tensor data_224x224_resnet = vxCreateTensor(context, 4, dims_data_224X224, VX_TYPE_FLOAT32, 0);
@@ -455,7 +454,7 @@ int main(int argc, const char ** argv)
 	ERROR_CHECK_STATUS(vxWriteScalarValue(modelOutputName_vgg19, outputTensor_vgg19Buf));
 
 	//squeezenet scalars
-	
+
 	vx_scalar modelLocation_squeezenet = vxCreateScalar(context, VX_TYPE_STRING_AMD, &onnxModel_squeezenet);
 	ERROR_CHECK_STATUS(vxWriteScalarValue(modelLocation_squeezenet, model_squeezenetBuf));
 	vx_scalar modelInputName_squeezenet = vxCreateScalar(context, VX_TYPE_STRING_AMD, &inputTensor_squeezenet);
@@ -464,7 +463,7 @@ int main(int argc, const char ** argv)
 	ERROR_CHECK_STATUS(vxWriteScalarValue(modelOutputName_squeezenet, outputTensor_squeezenetBuf));
 
 	//densenet scalars
-	
+
 	vx_scalar modelLocation_densenet = vxCreateScalar(context, VX_TYPE_STRING_AMD, &onnxModel_densenet121);
 	ERROR_CHECK_STATUS(vxWriteScalarValue(modelLocation_densenet, model_densenetBuf));
 	vx_scalar modelInputName_densenet = vxCreateScalar(context, VX_TYPE_STRING_AMD, &inputTensor_densenet);
@@ -510,12 +509,148 @@ int main(int argc, const char ** argv)
 	runShufflenet = true; runSqueezenet = true;
 	runDensenet121 = true; runZfnet512 = true;
 
+	vx_graph graph_vgg19 = vxCreateGraph(context);
+	ERROR_CHECK_OBJECT(graph_vgg19);
+	vx_graph graph_squeezenet = vxCreateGraph(context);
+	ERROR_CHECK_OBJECT(graph_squeezenet);
+	vx_graph graph_resnet = vxCreateGraph(context);
+	ERROR_CHECK_OBJECT(graph_resnet);
+	vx_graph graph_densenet121 = vxCreateGraph(context);
+	ERROR_CHECK_OBJECT(graph_densenet121);
+	vx_graph graph_inception = vxCreateGraph(context);
+	ERROR_CHECK_OBJECT(graph_inception);
+	vx_graph graph_shufflenet = vxCreateGraph(context);
+	ERROR_CHECK_OBJECT(graph_shufflenet); 
+	vx_graph graph_zfnet512 = vxCreateGraph(context);
+	ERROR_CHECK_OBJECT(graph_zfnet512);
 
-	std::string inceptionText = "Unclassified", resnetText = "Unclassified", vggText = "Unclassified", shufflenetText = "Unclassified";
-	std::string squeezenetText = "Unclassified", densenetText = "Unclassified", zfnetText = "Unclassified";
+	//setup arrays
+	vx_array setup_array_vgg = vxCreateArray(context, VX_TYPE_SIZE, sizeof(VX_TYPE_SIZE));
+	ERROR_CHECK_OBJECT(setup_array_vgg);
+	vx_array setup_array_squeezenet = vxCreateArray(context, VX_TYPE_SIZE, sizeof(VX_TYPE_SIZE));
+	ERROR_CHECK_OBJECT(setup_array_squeezenet);
+	vx_array setup_array_resnet = vxCreateArray(context, VX_TYPE_SIZE, sizeof(VX_TYPE_SIZE));
+	ERROR_CHECK_OBJECT(setup_array_resnet);
+	vx_array setup_array_densenet = vxCreateArray(context, VX_TYPE_SIZE, sizeof(VX_TYPE_SIZE));
+	ERROR_CHECK_OBJECT(setup_array_densenet);
+	vx_array setup_array_inception = vxCreateArray(context, VX_TYPE_SIZE, sizeof(VX_TYPE_SIZE));
+	ERROR_CHECK_OBJECT(setup_array_inception);
+	vx_array setup_array_shufflenet = vxCreateArray(context, VX_TYPE_SIZE, sizeof(VX_TYPE_SIZE));
+	ERROR_CHECK_OBJECT(setup_array_shufflenet);
+	vx_array setup_array_zfnet = vxCreateArray(context, VX_TYPE_SIZE, sizeof(VX_TYPE_SIZE));
+	ERROR_CHECK_OBJECT(setup_array_zfnet);
 
+	//build graphs
 	int64_t freq = clockFrequency(), t0, t1;
 	t0 = clockCounter();
+
+	vx_node nodes_vgg19[] =
+	{
+		vxExtWinMLNode_convertImageToTensor(graph_vgg19, input_image, data_224x224_vgg19, a, b, rev),
+		vxExtWinMLNode_OnnxToMivisionX(graph_vgg19, modelLocation_vgg19, modelInputName_vgg19, modelOutputName_vgg19, data_224x224_vgg19, prob_vgg19, deviceKind, setup_array_vgg),
+		vxExtWinMLNode_getTopKLabels(graph_vgg19, prob_vgg19, labelDir, top1_vgg19, NULL, NULL, NULL, NULL)
+	};
+
+	for (vx_size i = 0; i < sizeof(nodes_vgg19) / sizeof(nodes_vgg19[0]); i++)
+	{
+		ERROR_CHECK_OBJECT(nodes_vgg19[i]);
+	}
+	
+	vx_node nodes_squeezenet[] =
+	{
+			vxExtWinMLNode_convertImageToTensor(graph_squeezenet, input_image, data_224x224_squeezenet, a, b, rev),
+			vxExtWinMLNode_OnnxToMivisionX(graph_squeezenet, modelLocation_squeezenet, modelInputName_squeezenet, modelOutputName_squeezenet, data_224x224_squeezenet, prob_squeezenet, deviceKind, setup_array_squeezenet),
+			vxExtWinMLNode_getTopKLabels(graph_squeezenet, prob_squeezenet, labelDir, top1_squeezenet, NULL, NULL, NULL, NULL)
+	};
+
+	for (vx_size i = 0; i < sizeof(nodes_squeezenet) / sizeof(nodes_squeezenet[0]); i++)
+	{
+		ERROR_CHECK_OBJECT(nodes_squeezenet[i]);
+	}
+
+	vx_node nodes_resnet[] =
+	{
+		   vxExtWinMLNode_convertImageToTensor(graph_resnet, input_image, data_224x224_resnet, a, b, rev),
+		   vxExtWinMLNode_OnnxToMivisionX(graph_resnet, modelLocation_resnet, modelInputName_resnet, modelOutputName_resnet, data_224x224_resnet, prob_resnet, deviceKind, setup_array_resnet),
+		   vxExtWinMLNode_getTopKLabels(graph_resnet, prob_resnet, labelDir, top1_resnet, NULL, NULL, NULL, NULL)
+	};
+
+	for (vx_size i = 0; i < sizeof(nodes_resnet) / sizeof(nodes_resnet[0]); i++)
+	{
+		ERROR_CHECK_OBJECT(nodes_resnet[i]);
+	}
+
+	vx_node nodes_densenet[] =
+	{
+		   vxExtWinMLNode_convertImageToTensor(graph_densenet121, input_image, data_224x224_densenet121, a, b, rev),
+		   vxExtWinMLNode_OnnxToMivisionX(graph_densenet121, modelLocation_densenet, modelInputName_densenet, modelOutputName_densenet, data_224x224_densenet121, prob_densenet121, deviceKind, setup_array_densenet),
+		   vxExtWinMLNode_getTopKLabels(graph_densenet121, prob_densenet121, labelDir, top1_densenet, NULL, NULL, NULL, NULL)
+	};
+
+	for (vx_size i = 0; i < sizeof(nodes_densenet) / sizeof(nodes_densenet[0]); i++)
+	{
+		ERROR_CHECK_OBJECT(nodes_densenet[i]);
+	}
+
+	vx_node nodes_inception[] =
+	{
+		   vxExtWinMLNode_convertImageToTensor(graph_inception, input_image, data_224x224_inception, a_inception, b_inception, rev),
+		   vxExtWinMLNode_OnnxToMivisionX(graph_inception, modelLocation_inception, modelInputName_inception, modelOutputName_inception, data_224x224_inception, prob_inception, deviceKind, setup_array_inception),
+		   vxExtWinMLNode_getTopKLabels(graph_inception, prob_inception, labelDir, top1_inception, NULL, NULL, NULL, NULL)
+	};
+
+	for (vx_size i = 0; i < sizeof(nodes_inception) / sizeof(nodes_inception[0]); i++)
+	{
+		ERROR_CHECK_OBJECT(nodes_inception[i]);
+	}
+
+	vx_node nodes_shufflenet[] =
+	{
+		   vxExtWinMLNode_convertImageToTensor(graph_shufflenet, input_image, data_224x224_shufflenet, a, b, rev),
+		   vxExtWinMLNode_OnnxToMivisionX(graph_shufflenet, modelLocation_shufflenet, modelInputName_shufflenet, modelOutputName_shufflenet, data_224x224_shufflenet, prob_shufflenet, deviceKind, setup_array_shufflenet),
+		   vxExtWinMLNode_getTopKLabels(graph_shufflenet, prob_shufflenet, labelDir, top1_shufflenet, NULL, NULL, NULL, NULL)
+	};
+
+	for (vx_size i = 0; i < sizeof(nodes_shufflenet) / sizeof(nodes_shufflenet[0]); i++)
+	{
+		ERROR_CHECK_OBJECT(nodes_shufflenet[i]);
+	}
+
+	vx_node nodes_zfnet[] =
+	{
+		   vxExtWinMLNode_convertImageToTensor(graph_zfnet512, input_image, data_224x224_zfnet512, a, b, rev),
+		   vxExtWinMLNode_OnnxToMivisionX(graph_zfnet512, modelLocation_zfnet, modelInputName_zfnet, modelOutputName_zfnet, data_224x224_zfnet512, prob_zfnet512, deviceKind, setup_array_zfnet),
+		   vxExtWinMLNode_getTopKLabels(graph_zfnet512, prob_zfnet512, labelDir, top1_zfnet, NULL, NULL, NULL, NULL)
+	};
+
+	for (vx_size i = 0; i < sizeof(nodes_zfnet) / sizeof(nodes_zfnet[0]); i++)
+	{
+		ERROR_CHECK_OBJECT(nodes_zfnet[i]);
+	}
+
+	//initialize graphs 
+	ERROR_CHECK_STATUS(vxVerifyGraph(graph_vgg19));
+	ERROR_CHECK_STATUS(vxVerifyGraph(graph_squeezenet));
+	ERROR_CHECK_STATUS(vxVerifyGraph(graph_resnet));
+	ERROR_CHECK_STATUS(vxVerifyGraph(graph_densenet121));
+	ERROR_CHECK_STATUS(vxVerifyGraph(graph_inception));
+	ERROR_CHECK_STATUS(vxVerifyGraph(graph_shufflenet));
+	ERROR_CHECK_STATUS(vxVerifyGraph(graph_zfnet512));
+
+	t1 = clockCounter();
+	printf("OK: graph initialization with vxVerifyGraph() took %.3f msec\n", (float)(t1 - t0)*1000.0f / (float)freq);
+
+	t0 = clockCounter();
+	ERROR_CHECK_STATUS(vxProcessGraph(graph_vgg19));
+	ERROR_CHECK_STATUS(vxProcessGraph(graph_squeezenet));
+	ERROR_CHECK_STATUS(vxProcessGraph(graph_resnet));
+	ERROR_CHECK_STATUS(vxProcessGraph(graph_densenet121));
+	ERROR_CHECK_STATUS(vxProcessGraph(graph_inception));
+	ERROR_CHECK_STATUS(vxProcessGraph(graph_shufflenet));
+	ERROR_CHECK_STATUS(vxProcessGraph(graph_zfnet512));
+
+	t1 = clockCounter();
+	printf("OK: vxProcessGraph() took %.3f msec (1st iteration)\n", (float)(t1 - t0)*1000.0f / (float)freq);
 
 	/***** OPENCV Additions *****/
 
@@ -584,11 +719,7 @@ int main(int argc, const char ** argv)
 			msFrame += (float)(t1 - t0)*1000.0f / (float)freq;
 			//printf("LIVE: OpenCV Frame Resize Time -- %.3f msec\n", (float)(t1-t0)*1000.0f/(float)freq);
 
-				if (frame.empty()) {
-				printf("Image not found\n");
-			}
-			cv::resize(frame, frame, Size(224, 224));
-
+			t0 = clockCounter();
 			vx_rectangle_t cv_image_region;
 			cv_image_region.start_x = 0;
 			cv_image_region.start_y = 0;
@@ -596,253 +727,120 @@ int main(int argc, const char ** argv)
 			cv_image_region.end_y = 224;
 			vx_imagepatch_addressing_t cv_image_layout;
 			cv_image_layout.stride_x = 3;
-			cv_image_layout.stride_y = frame.step;
-			vx_uint8 * cv_image_buffer = frame.data;
+			cv_image_layout.stride_y = inputFrame_224x224.step;
+			vx_uint8 * cv_image_buffer = inputFrame_224x224.data;
 
 			ERROR_CHECK_STATUS(vxCopyImagePatch(input_image, &cv_image_region, 0,
 				&cv_image_layout, cv_image_buffer,
 				VX_WRITE_ONLY, VX_MEMORY_TYPE_HOST));
-			
-		
+			t1 = clockCounter();
+			msFrame += (float)(t1 - t0)*1000.0f / (float)freq;
+			//printf("LIVE: OpenCV to OpenVX image copy time -- %.3f msec\n", (float)(t1-t0)*1000.0f/(float)freq);
+
+			std::string inceptionText = "Unclassified", resnetText = "Unclassified", vggText = "Unclassified", shufflenetText = "Unclassified";
+			std::string squeezenetText = "Unclassified", densenetText = "Unclassified", zfnetText = "Unclassified";
+
+			//process graph for the input
 			if (runVgg19)
 			{
-				vx_graph graph_vgg19 = vxCreateGraph(context);
-				ERROR_CHECK_OBJECT(graph_vgg19);
-
-				vx_node nodes[] =
-				{
-					vxExtWinMLNode_convertImageToTensor(graph_vgg19, input_image, data_224x224_vgg19, a, b, rev),
-					vxExtWinMLNode_OnnxToMivisionX(graph_vgg19, modelLocation_vgg19, modelInputName_vgg19, modelOutputName_vgg19, data_224x224_vgg19, prob_vgg19, deviceKind),
-					vxExtWinMLNode_getTopKLabels(graph_vgg19, prob_vgg19, labelDir, top1_vgg19, NULL, NULL, NULL, NULL)
-				};
-
-				for (vx_size i = 0; i < sizeof(nodes) / sizeof(nodes[0]); i++)
-				{
-					ERROR_CHECK_OBJECT(nodes[i]);
-					ERROR_CHECK_STATUS(vxReleaseNode(&nodes[i]));
-				}
-				ERROR_CHECK_STATUS(vxVerifyGraph(graph_vgg19));
 				t0 = clockCounter();
-				ERROR_CHECK_STATUS(vxProcessGraph(graph_vgg19)); 
+				status = vxProcessGraph(graph_vgg19);
+				if (status != VX_SUCCESS) break;
 				t1 = clockCounter();
 				vgg19Time_g = (float)(t1 - t0)*1000.0f / (float)freq;
-				//printf("LIVE: Process vgg19 Classification Time -- %.3f msec\n", (float)(t1-t0)*1000.0f/(float)freq);
+				msFrame += (float)(t1 - t0)*1000.0f / (float)freq;
+				//printf("LIVE: Process VGG19 Classification Time -- %.3f msec\n", (float)(t1-t0)*1000.0f/(float)freq);
+
 				char top1_result[1024];
 				ERROR_CHECK_STATUS(vxReadScalarValue(top1_vgg19, top1_result));
 				vggText = top1_result;
 
-				ERROR_CHECK_STATUS(vxReleaseGraph(&graph_vgg19));
-								
-			}
-			
+			}			
 			if (runSqueezenet)
 			{
-				vx_graph graph_squeezenet = vxCreateGraph(context);
-				ERROR_CHECK_OBJECT(graph_squeezenet);
-				vx_node nodes[] =
-				{
-						vxExtWinMLNode_convertImageToTensor(graph_squeezenet, input_image, data_224x224_squeezenet, a, b, rev),
-						vxExtWinMLNode_OnnxToMivisionX(graph_squeezenet, modelLocation_squeezenet, modelInputName_squeezenet, modelOutputName_squeezenet, data_224x224_squeezenet, prob_squeezenet, deviceKind),
-						vxExtWinMLNode_getTopKLabels(graph_squeezenet, prob_squeezenet, labelDir, top1_squeezenet, NULL, NULL, NULL, NULL)
-				};
-
-				for (vx_size i = 0; i < sizeof(nodes) / sizeof(nodes[0]); i++)
-				{
-					ERROR_CHECK_OBJECT(nodes[i]);
-					ERROR_CHECK_STATUS(vxReleaseNode(&nodes[i]));
-				}
-
-				ERROR_CHECK_STATUS(vxVerifyGraph(graph_squeezenet));
 				t0 = clockCounter();
-				ERROR_CHECK_STATUS(vxProcessGraph(graph_squeezenet));
+				status = vxProcessGraph(graph_squeezenet);
+				if (status != VX_SUCCESS) break;
 				t1 = clockCounter();
 				squeezenetTime_g = (float)(t1 - t0)*1000.0f / (float)freq;
+				msFrame += (float)(t1 - t0)*1000.0f / (float)freq;
 				//printf("LIVE: Process squeezenet Classification Time -- %.3f msec\n", (float)(t1-t0)*1000.0f/(float)freq);
 
 				char top1_result[1024];
 				ERROR_CHECK_STATUS(vxReadScalarValue(top1_squeezenet, top1_result));
 				squeezenetText = (top1_result);
 
-				ERROR_CHECK_STATUS(vxReleaseGraph(&graph_squeezenet));
-			
 			}
-
 			if (runDensenet121)
 			{
-				vx_graph graph_densenet121 = vxCreateGraph(context);
-				ERROR_CHECK_OBJECT(graph_densenet121);
-
-				vx_node nodes[] =
-				{
-					   vxExtWinMLNode_convertImageToTensor(graph_densenet121, input_image, data_224x224_densenet121, a, b, rev),
-					   vxExtWinMLNode_OnnxToMivisionX(graph_densenet121, modelLocation_densenet, modelInputName_densenet, modelOutputName_densenet, data_224x224_densenet121, prob_densenet121, deviceKind),
-					   vxExtWinMLNode_getTopKLabels(graph_densenet121, prob_densenet121, labelDir, top1_densenet, NULL, NULL, NULL, NULL)
-				};
-
-				for (vx_size i = 0; i < sizeof(nodes) / sizeof(nodes[0]); i++)
-				{
-					ERROR_CHECK_OBJECT(nodes[i]);
-					ERROR_CHECK_STATUS(vxReleaseNode(&nodes[i]));
-				}
-
-				ERROR_CHECK_STATUS(vxVerifyGraph(graph_densenet121));
 				t0 = clockCounter();
 				ERROR_CHECK_STATUS(vxProcessGraph(graph_densenet121));
+				if (status != VX_SUCCESS) break;
 				t1 = clockCounter();
-				densenet121Time_g = (float)(t1 - t0)*1000.0f / (float)freq;
+				densenet121Time_g = (float)(t1 - t0)*1000.0f / (float)freq; 
+				msFrame += (float)(t1 - t0)*1000.0f / (float)freq;
 				//printf("LIVE: Process densenet121 Classification Time -- %.3f msec\n", (float)(t1-t0)*1000.0f/(float)freq);
 
 				char top1_result[1024];
 				ERROR_CHECK_STATUS(vxReadScalarValue(top1_densenet, top1_result));
 				densenetText =  top1_result;
-
-				ERROR_CHECK_STATUS(vxReleaseGraph(&graph_densenet121));
-
-
 			}
-			
 			if (runInception)
 			{
-
-				vx_graph graph_inception = vxCreateGraph(context);
-				ERROR_CHECK_OBJECT(graph_inception);
-
-				vx_node nodes[] =
-				{
-					   vxExtWinMLNode_convertImageToTensor(graph_inception, input_image, data_224x224_inception, a_inception, b_inception, rev),
-					   vxExtWinMLNode_OnnxToMivisionX(graph_inception, modelLocation_inception, modelInputName_inception, modelOutputName_inception, data_224x224_inception, prob_inception, deviceKind),
-					   vxExtWinMLNode_getTopKLabels(graph_inception, prob_inception, labelDir, top1_inception, NULL, NULL, NULL, NULL)
-				};
-				
-				for (vx_size i = 0; i < sizeof(nodes) / sizeof(nodes[0]); i++)
-				{
-					ERROR_CHECK_OBJECT(nodes[i]);
-					ERROR_CHECK_STATUS(vxReleaseNode(&nodes[i]));
-				}
-
-				ERROR_CHECK_STATUS(vxVerifyGraph(graph_inception));
 				t0 = clockCounter();
 				ERROR_CHECK_STATUS(vxProcessGraph(graph_inception));
 				t1 = clockCounter();
 				inceptionV2Time_g = (float)(t1 - t0)*1000.0f / (float)freq;
+				msFrame += (float)(t1 - t0)*1000.0f / (float)freq;
 				//printf("LIVE: Process inceptionV2 Classification Time -- %.3f msec\n", (float)(t1-t0)*1000.0f/(float)freq);
 
 				char top1_result[1024];
 				ERROR_CHECK_STATUS(vxReadScalarValue(top1_inception, top1_result));
 				inceptionText = top1_result;
-
-				ERROR_CHECK_STATUS(vxReleaseGraph(&graph_inception));
-				
-
 			}
-			
 			if (runResnet50)
 			{
-				vx_graph graph_resnet = vxCreateGraph(context);
-				ERROR_CHECK_OBJECT(graph_resnet);
-
-				vx_node nodes[] =
-				{
-					   vxExtWinMLNode_convertImageToTensor(graph_resnet, input_image, data_224x224_resnet, a, b, rev),
-					   vxExtWinMLNode_OnnxToMivisionX(graph_resnet, modelLocation_resnet, modelInputName_resnet, modelOutputName_resnet, data_224x224_resnet, prob_resnet, deviceKind),
-					   vxExtWinMLNode_getTopKLabels(graph_resnet, prob_resnet, labelDir, top1_resnet, NULL, NULL, NULL, NULL)
-				};
-				
-				for (vx_size i = 0; i < sizeof(nodes) / sizeof(nodes[0]); i++)
-				{
-					ERROR_CHECK_OBJECT(nodes[i]);
-					ERROR_CHECK_STATUS(vxReleaseNode(&nodes[i]));
-				}
-
-
-				ERROR_CHECK_STATUS(vxVerifyGraph(graph_resnet));
 				t0 = clockCounter();
-				ERROR_CHECK_STATUS(vxProcessGraph(graph_resnet));
+				status = vxProcessGraph(graph_resnet);
+				if(status != VX_SUCCESS) break;
 				t1 = clockCounter();
 				resnet50Time_g = (float)(t1 - t0)*1000.0f / (float)freq;
+				msFrame += (float)(t1-t0)*1000.0f/(float)freq;
 				//printf("LIVE: Process resnet50 Classification Time -- %.3f msec\n", (float)(t1-t0)*1000.0f/(float)freq);
 
 				char top1_result[1024];
 				ERROR_CHECK_STATUS(vxReadScalarValue(top1_resnet, top1_result));
 				resnetText = top1_result;
-
-				ERROR_CHECK_STATUS(vxReleaseGraph(&graph_resnet));
-			}
-			
+			}			
 			if (runShufflenet)
 			{
-				vx_graph graph_shufflenet = vxCreateGraph(context);
-				ERROR_CHECK_OBJECT(graph_shufflenet);
-
-
-				vx_node nodes[] =
-				{
-					   vxExtWinMLNode_convertImageToTensor(graph_shufflenet, input_image, data_224x224_shufflenet, a, b, rev),
-					   vxExtWinMLNode_OnnxToMivisionX(graph_shufflenet, modelLocation_shufflenet, modelInputName_shufflenet, modelOutputName_shufflenet, data_224x224_shufflenet, prob_shufflenet, deviceKind),
-					   vxExtWinMLNode_getTopKLabels(graph_shufflenet, prob_shufflenet, labelDir, top1_shufflenet, NULL, NULL, NULL, NULL)
-				};
-				
-				for (vx_size i = 0; i < sizeof(nodes) / sizeof(nodes[0]); i++)
-				{
-					ERROR_CHECK_OBJECT(nodes[i]);
-					ERROR_CHECK_STATUS(vxReleaseNode(&nodes[i]));
-				}
-
-				ERROR_CHECK_STATUS(vxVerifyGraph(graph_shufflenet));
 				t0 = clockCounter();
 				ERROR_CHECK_STATUS(vxProcessGraph(graph_shufflenet));
 				t1 = clockCounter();
 				shufflenetTime_g = (float)(t1 - t0)*1000.0f / (float)freq;
+				msFrame += (float)(t1 - t0)*1000.0f / (float)freq;
 				//printf("LIVE: Process shufflenet Classification Time -- %.3f msec\n", (float)(t1-t0)*1000.0f/(float)freq);
 
 				char top1_result[1024];
 				ERROR_CHECK_STATUS(vxReadScalarValue(top1_shufflenet, top1_result));
 				shufflenetText = top1_result;
-
-
-				ERROR_CHECK_STATUS(vxReleaseGraph(&graph_shufflenet));
 			}
-			
 			if (runZfnet512)
 			{
-				
-				vx_graph graph_zfnet512 = vxCreateGraph(context);
-				ERROR_CHECK_OBJECT(graph_zfnet512);
-
-
-				vx_node nodes[] =
-				{
-					   vxExtWinMLNode_convertImageToTensor(graph_zfnet512, input_image, data_224x224_zfnet512, a, b, rev),
-					   vxExtWinMLNode_OnnxToMivisionX(graph_zfnet512, modelLocation_zfnet, modelInputName_zfnet, modelOutputName_zfnet, data_224x224_zfnet512, prob_zfnet512, deviceKind),
-					   vxExtWinMLNode_getTopKLabels(graph_zfnet512, prob_zfnet512, labelDir, top1_zfnet, NULL, NULL, NULL, NULL)
-				};
-				for (vx_size i = 0; i < sizeof(nodes) / sizeof(nodes[0]); i++)
-				{
-					ERROR_CHECK_OBJECT(nodes[i]);
-					ERROR_CHECK_STATUS(vxReleaseNode(&nodes[i]));
-				}
-
-
-				ERROR_CHECK_STATUS(vxVerifyGraph(graph_zfnet512));
 				t0 = clockCounter();
 				ERROR_CHECK_STATUS(vxProcessGraph(graph_zfnet512));
 				t1 = clockCounter();
 				zfnet512Time_g = (float)(t1 - t0)*1000.0f / (float)freq;
+				msFrame += (float)(t1 - t0)*1000.0f / (float)freq;
 				//printf("LIVE: Process zfnet Classification Time -- %.3f msec\n", (float)(t1-t0)*1000.0f/(float)freq);
 
 				char top1_result[1024];
 				ERROR_CHECK_STATUS(vxReadScalarValue(top1_zfnet, top1_result));
 				zfnetText = top1_result;
-
-
-				ERROR_CHECK_STATUS(vxReleaseGraph(&graph_zfnet512));
 			}
 			
-			t1 = clockCounter();
-			msFrame += (float)(t1 - t0)*1000.0f / (float)freq;
 			//printf("LIVE: Convert Image to Tensor Time -- %.3f msec\n", (float)(t1-t0)*1000.0f/(float)freq);
 
-			
 			// Write Output on Image
 			t0 = clockCounter();
 			cv::resize(frame, outputDisplay, cv::Size(outputImgWidth, outputImgHeight));
@@ -932,7 +930,6 @@ int main(int argc, const char ** argv)
 		}
 	}
 
-	
 	// release input data
 	ERROR_CHECK_STATUS(vxReleaseTensor(&data_224x224_inception));
 	ERROR_CHECK_STATUS(vxReleaseTensor(&data_224x224_resnet));
@@ -941,7 +938,7 @@ int main(int argc, const char ** argv)
 	ERROR_CHECK_STATUS(vxReleaseTensor(&data_224x224_shufflenet));
 	ERROR_CHECK_STATUS(vxReleaseTensor(&data_224x224_densenet121));
 	ERROR_CHECK_STATUS(vxReleaseTensor(&data_224x224_zfnet512));
-
+	
 	// release output data
 	ERROR_CHECK_STATUS(vxReleaseTensor(&prob_inception));
 	ERROR_CHECK_STATUS(vxReleaseTensor(&prob_resnet));
@@ -951,6 +948,48 @@ int main(int argc, const char ** argv)
 	ERROR_CHECK_STATUS(vxReleaseTensor(&prob_densenet121));
 	ERROR_CHECK_STATUS(vxReleaseTensor(&prob_zfnet512));
 	
+
+	//release nodes
+	for (vx_size i = 0; i < sizeof(nodes_inception) / sizeof(nodes_inception[0]); i++)
+	{
+		ERROR_CHECK_STATUS(vxReleaseNode(&nodes_inception[i]));
+	}
+	for (vx_size i = 0; i < sizeof(nodes_resnet) / sizeof(nodes_resnet[0]); i++)
+	{
+		ERROR_CHECK_STATUS(vxReleaseNode(&nodes_resnet[i]));
+	}
+	for (vx_size i = 0; i < sizeof(nodes_vgg19) / sizeof(nodes_vgg19[0]); i++)
+	{
+		ERROR_CHECK_STATUS(vxReleaseNode(&nodes_vgg19[i]));
+	}
+	for (vx_size i = 0; i < sizeof(nodes_shufflenet) / sizeof(nodes_shufflenet[0]); i++)
+	{
+		ERROR_CHECK_STATUS(vxReleaseNode(&nodes_shufflenet[i]));
+	}
+	for (vx_size i = 0; i < sizeof(nodes_squeezenet) / sizeof(nodes_squeezenet[0]); i++)
+	{
+		ERROR_CHECK_STATUS(vxReleaseNode(&nodes_squeezenet[i]));
+	}
+	for (vx_size i = 0; i < sizeof(nodes_zfnet) / sizeof(nodes_zfnet[0]); i++)
+	{
+		ERROR_CHECK_STATUS(vxReleaseNode(&nodes_zfnet[i]));
+	}
+	for (vx_size i = 0; i < sizeof(nodes_densenet) / sizeof(nodes_densenet[0]); i++)
+	{
+		ERROR_CHECK_STATUS(vxReleaseNode(&nodes_densenet[i]));
+	}
+
+	//release graphs
+	ERROR_CHECK_STATUS(vxReleaseGraph(&graph_inception));
+	ERROR_CHECK_STATUS(vxReleaseGraph(&graph_resnet));
+	ERROR_CHECK_STATUS(vxReleaseGraph(&graph_vgg19));
+	ERROR_CHECK_STATUS(vxReleaseGraph(&graph_shufflenet));
+	ERROR_CHECK_STATUS(vxReleaseGraph(&graph_squeezenet));
+	ERROR_CHECK_STATUS(vxReleaseGraph(&graph_zfnet512));
+	ERROR_CHECK_STATUS(vxReleaseGraph(&graph_densenet121));
+
+	ERROR_CHECK_STATUS(vxReleaseContext(&context));
+
 	printf("OK: successful\n");
 
 	return 0;
