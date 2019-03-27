@@ -1262,7 +1262,7 @@ int main(int argc, const char ** argv)
                 putText(outputDisplay, modelName6, Point(20, (l * 40) + 30), fontFace, fontScale, Scalar(red,green,blue), thickness,8);
                 l++;
             }
-            if(runVgg19 && binaryFilename_vgg19--_str != "empty")
+            if(runVgg19 && binaryFilename_vgg19_str != "empty")
             {
                 red = (colors[6][2]); green = (colors[6][1]); blue = (colors[6][0]) ;
                 putText(outputDisplay, modelName7, Point(20, (l * 40) + 30), fontFace, fontScale, Scalar(red,green,blue), thickness,8);
