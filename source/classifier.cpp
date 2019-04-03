@@ -106,7 +106,7 @@ void threshold_on_trackbar( int, void* ){
     return;
 }
 
-bool runInception, runResnet50, runVgg16, runGooglenet, runResnet101, runResnet152, runVgg19;
+bool runInception = false, runResnet50 = false, runVgg16 = false, runGooglenet = false, runResnet101 = false, runResnet152 = false, runVgg19 = false;
 float inceptionV4Time_g, resnet50Time_g, vgg16Time_g, googlenetTime_g, resnet101Time_g, resnet152Time_g, vgg19Time_g;
 
 void createLegendImage()
@@ -567,6 +567,7 @@ int main(int argc, const char ** argv)
 	        printf("ERROR: inception vxVerifyGraph(...) failed (%d)\n", status);
 	        return -1;
     	}
+        runInception = true;
     }
    
     if(binaryFilename_resnet_str != "empty"){
@@ -580,6 +581,7 @@ int main(int argc, const char ** argv)
 	        printf("ERROR: resnet vxVerifyGraph(...) failed (%d)\n", status);
 	        return -1;
 	    }
+        runResnet50 = true;
     }
     
     if(binaryFilename_vgg_str != "empty"){
@@ -593,6 +595,7 @@ int main(int argc, const char ** argv)
 	        printf("ERROR: vgg vxVerifyGraph(...) failed (%d)\n", status);
 	        return -1;
 	    }
+        runVgg16 = true;
     }
     
     if(binaryFilename_googlenet_str != "empty"){
@@ -606,6 +609,7 @@ int main(int argc, const char ** argv)
 	        printf("ERROR: googlenet vxVerifyGraph(...) failed (%d)\n", status);
 	        return -1;
 	    }
+        runGooglenet = true;
     }
     
 
@@ -620,6 +624,7 @@ int main(int argc, const char ** argv)
 	        printf("ERROR: resnet101 vxVerifyGraph(...) failed (%d)\n", status);
 	        return -1;
 	    }
+        runResnet101 = true;
     }
    
     if(binaryFilename_resnet152_str != "empty"){
@@ -633,6 +638,7 @@ int main(int argc, const char ** argv)
 	        printf("ERROR: resnet`52 vxVerifyGraph(...) failed (%d)\n", status);
 	        return -1;
 	    }
+        runResnet152 = true;
     }
     
     if(binaryFilename_vgg19_str != "empty"){
@@ -646,6 +652,7 @@ int main(int argc, const char ** argv)
 	        printf("ERROR: vgg19 vxVerifyGraph(...) failed (%d)\n", status);
 	        return -1;
 	    }
+        runVgg19 = true;
     }
     
 
@@ -784,9 +791,6 @@ int main(int argc, const char ** argv)
     //cv::createTrackbar("Probability Threshold", MIVisionX_LEGEND, &threshold_slider, threshold_slider_max, threshold_on_trackbar);
 
     // create display legend image
-    runInception = true; runResnet50 = true; runVgg16 = true;
-    runGooglenet = true; runResnet101 = true; 
-    runResnet152 = true; runVgg19 = true;
     inceptionV4Time_g = inceptionV4Time; resnet50Time_g = resnet50Time;
     vgg16Time_g = vgg16Time; resnet101Time_g =  resnet101Time;
     googlenetTime_g = googlenetTime; resnet152Time_g = resnet152Time; vgg19Time_g = vgg19Time;
