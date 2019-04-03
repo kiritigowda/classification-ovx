@@ -246,6 +246,7 @@ static void show_usage()
         );
 }
 
+
 int main(int argc, const char ** argv)
 {
     // check command-line usage   
@@ -391,7 +392,6 @@ int main(int argc, const char ** argv)
 	        }
 	        out.close();
 	        parameter++;
-
         }
 
         else if (!strcasecmp(argv[arg], "--video") || !strcasecmp(argv[arg], "--V") || !strcasecmp(argv[arg], "--v"))
@@ -554,99 +554,100 @@ int main(int argc, const char ** argv)
     strcpy(binaryFilename_resnet101, binaryFilename_resnet101_str.c_str());
     strcpy(binaryFilename_resnet152, binaryFilename_resnet152_str.c_str());
     strcpy(binaryFilename_vgg19, binaryFilename_vgg19_str.c_str());
-
     t0 = clockCounter();
-  
-    if(binaryFilename_inception_str != "empty"){
-        status = annAddToGraph_inception(graph_inception, data_299x299, prob_inception, binaryFilename_inception);
-        if(status) {
-            printf("ERROR: inception annAddToGraph() failed (%d)\n", status);
-            return -1;
-        }
-        status = vxVerifyGraph(graph_inception);
-        if(status) {
-            printf("ERROR: inception vxVerifyGraph(...) failed (%d)\n", status);
-            return -1;
-        }
 
+    if(binaryFilename_inception_str != "empty"){
+    	status = annAddToGraph_inception(graph_inception, data_299x299, prob_inception, binaryFilename_inception);
+	    if(status) {
+	        printf("ERROR: inception annAddToGraph() failed (%d)\n", status);
+	        return -1;
+	    }
+	    status = vxVerifyGraph(graph_inception);
+	    if(status) {
+	        printf("ERROR: inception vxVerifyGraph(...) failed (%d)\n", status);
+	        return -1;
+    	}
     }
    
     if(binaryFilename_resnet_str != "empty"){
-        status = annAddToGraph_resnet(graph_resnet, data_224x224, prob_resnet, binaryFilename_resnet);
-        if(status) {
-            printf("ERROR: resnet annAddToGraph() failed (%d)\n", status);
-            return -1;
-        }
-        status = vxVerifyGraph(graph_resnet);
-        if(status) {
-            printf("ERROR: resnet vxVerifyGraph(...) failed (%d)\n", status);
-            return -1;
-        }
+    	status = annAddToGraph_resnet(graph_resnet, data_224x224, prob_resnet, binaryFilename_resnet);
+	    if(status) {
+	        printf("ERROR: resnet annAddToGraph() failed (%d)\n", status);
+	        return -1;
+	    }
+	    status = vxVerifyGraph(graph_resnet);
+	    if(status) {
+	        printf("ERROR: resnet vxVerifyGraph(...) failed (%d)\n", status);
+	        return -1;
+	    }
     }
     
     if(binaryFilename_vgg_str != "empty"){
-        status = annAddToGraph_vgg(graph_vgg, data_224x224, prob_vgg, binaryFilename_vgg);
-        if(status) {
-            printf("ERROR: vgg annAddToGraph() failed (%d)\n", status);
-            return -1;
-        }
-        status = vxVerifyGraph(graph_vgg);
-        if(status) {
-            printf("ERROR: vgg vxVerifyGraph(...) failed (%d)\n", status);
-            return -1;
-        }
+    	status = annAddToGraph_vgg(graph_vgg, data_224x224, prob_vgg, binaryFilename_vgg);
+	    if(status) {
+	        printf("ERROR: vgg annAddToGraph() failed (%d)\n", status);
+	        return -1;
+	    }
+	    status = vxVerifyGraph(graph_vgg);
+	    if(status) {
+	        printf("ERROR: vgg vxVerifyGraph(...) failed (%d)\n", status);
+	        return -1;
+	    }
     }
     
     if(binaryFilename_googlenet_str != "empty"){
-        status = annAddToGraph_googleNet(graph_googlenet, data_224x224, prob_googlenet, binaryFilename_googlenet);
-        if(status) {
-            printf("ERROR: googlenet annAddToGraph() failed (%d)\n", status);
-            return -1;
-        }
-        status = vxVerifyGraph(graph_googlenet);
-        if(status) {
-            printf("ERROR: googlenet vxVerifyGraph(...) failed (%d)\n", status);
-            return -1;
-        }
+    	status = annAddToGraph_googleNet(graph_googlenet, data_224x224, prob_googlenet, binaryFilename_googlenet);
+	    if(status) {
+	        printf("ERROR: googlenet annAddToGraph() failed (%d)\n", status);
+	        return -1;
+	    }
+	    status = vxVerifyGraph(graph_googlenet);
+	    if(status) {
+	        printf("ERROR: googlenet vxVerifyGraph(...) failed (%d)\n", status);
+	        return -1;
+	    }
     }
+    
+
     if(binaryFilename_resnet101_str != "empty"){
-        status = annAddToGraph_resnet101(graph_resnet101, data_224x224, prob_resnet101, binaryFilename_resnet101);
-        if(status) {
-            printf("ERROR: resnet101 annAddToGraph() failed (%d)\n", status);
-            return -1;
-        }
-        status = vxVerifyGraph(graph_resnet101);
-        if(status) {
-            printf("ERROR: resnet101 vxVerifyGraph(...) failed (%d)\n", status);
-            return -1;
-        }
+    	status = annAddToGraph_resnet101(graph_resnet101, data_224x224, prob_resnet101, binaryFilename_resnet101);
+	    if(status) {
+	        printf("ERROR: resnet101 annAddToGraph() failed (%d)\n", status);
+	        return -1;
+	    }
+	    status = vxVerifyGraph(graph_resnet101);
+	    if(status) {
+	        printf("ERROR: resnet101 vxVerifyGraph(...) failed (%d)\n", status);
+	        return -1;
+	    }
     }
-
+   
     if(binaryFilename_resnet152_str != "empty"){
-        status = annAddToGraph_resnet152(graph_resnet152, data_224x224, prob_resnet152, binaryFilename_resnet152);
-        if(status) {
-            printf("ERROR: resnet152 annAddToGraph() failed (%d)\n", status);
-            return -1;
-        }
-        status = vxVerifyGraph(graph_resnet152);
-        if(status) {
-            printf("ERROR: resnet`52 vxVerifyGraph(...) failed (%d)\n", status);
-            return -1;
-        }
+    	status = annAddToGraph_resnet152(graph_resnet152, data_224x224, prob_resnet152, binaryFilename_resnet152);
+	    if(status) {
+	        printf("ERROR: resnet152 annAddToGraph() failed (%d)\n", status);
+	        return -1;
+	    }
+	    status = vxVerifyGraph(graph_resnet152);
+	    if(status) {
+	        printf("ERROR: resnet`52 vxVerifyGraph(...) failed (%d)\n", status);
+	        return -1;
+	    }
     }
-
+    
     if(binaryFilename_vgg19_str != "empty"){
-        status = annAddToGraph_vgg19(graph_vgg19, data_224x224, prob_vgg19, binaryFilename_vgg19);
-        if(status) {
-            printf("ERROR: vgg19 annAddToGraph() failed (%d)\n", status);
-            return -1;
-        }
-        status = vxVerifyGraph(graph_vgg);
-        if(status) {
-            printf("ERROR: vgg19 vxVerifyGraph(...) failed (%d)\n", status);
-            return -1;
-        }
+    	status = annAddToGraph_vgg19(graph_vgg19, data_224x224, prob_vgg19, binaryFilename_vgg19);
+	    if(status) {
+	        printf("ERROR: vgg19 annAddToGraph() failed (%d)\n", status);
+	        return -1;
+	    }
+	    status = vxVerifyGraph(graph_vgg);
+	    if(status) {
+	        printf("ERROR: vgg19 vxVerifyGraph(...) failed (%d)\n", status);
+	        return -1;
+	    }
     }
+    
 
     t1 = clockCounter();
     printf("OK: graph initialization with annAddToGraph() took %.3f msec\n", (float)(t1-t0)*1000.0f/(float)freq);
@@ -692,70 +693,85 @@ int main(int argc, const char ** argv)
 
     int N = 100;
     float inceptionV4Time, resnet50Time, vgg16Time, googlenetTime, resnet101Time, resnet152Time, vgg19Time;
-    t0 = clockCounter();
-    for(int i = 0; i < N; i++) {
-        status = vxProcessGraph(graph_inception);
-        if(status != VX_SUCCESS)
-            break;
+
+    if(binaryFilename_inception_str != "empty"){
+        t0 = clockCounter();
+        for(int i = 0; i < N; i++) {
+            status = vxProcessGraph(graph_inception);
+            if(status != VX_SUCCESS)
+                break;
+        }
+        t1 = clockCounter();
+        inceptionV4Time = (float)(t1-t0)*1000.0f/(float)freq/(float)N;
+        printf("OK: inceptionV4 took %.3f msec (average over %d iterations)\n", (float)(t1-t0)*1000.0f/(float)freq/(float)N, N);
     }
-    t1 = clockCounter();
-    inceptionV4Time = (float)(t1-t0)*1000.0f/(float)freq/(float)N;
-    printf("OK: inceptionV4 took %.3f msec (average over %d iterations)\n", (float)(t1-t0)*1000.0f/(float)freq/(float)N, N);
-    t0 = clockCounter();
-    for(int i = 0; i < N; i++) {
-        status = vxProcessGraph(graph_resnet);
-        if(status != VX_SUCCESS)
-            break;
+
+    if(binaryFilename_resnet_str != "empty"){
+        t0 = clockCounter();
+        for(int i = 0; i < N; i++) {
+            status = vxProcessGraph(graph_resnet);
+            if(status != VX_SUCCESS)
+                break;
+        }
+        t1 = clockCounter();
+        resnet50Time = (float)(t1-t0)*1000.0f/(float)freq/(float)N;
+        printf("OK: resnet50 took %.3f msec (average over %d iterations)\n", (float)(t1-t0)*1000.0f/(float)freq/(float)N, N);
     }
-    t1 = clockCounter();
-    resnet50Time = (float)(t1-t0)*1000.0f/(float)freq/(float)N;
-    printf("OK: resnet50 took %.3f msec (average over %d iterations)\n", (float)(t1-t0)*1000.0f/(float)freq/(float)N, N);
-    t0 = clockCounter();
-    for(int i = 0; i < N; i++) {
-        status = vxProcessGraph(graph_vgg);
-        if(status != VX_SUCCESS)
-            break;
+    if(binaryFilename_vgg_str != "empty"){
+        t0 = clockCounter();
+        for(int i = 0; i < N; i++) {
+            status = vxProcessGraph(graph_vgg);
+            if(status != VX_SUCCESS)
+                break;
+        }
+        t1 = clockCounter();
+        vgg16Time = (float)(t1-t0)*1000.0f/(float)freq/(float)N;
+        printf("OK: vgg16 took %.3f msec (average over %d iterations)\n", (float)(t1-t0)*1000.0f/(float)freq/(float)N, N);
     }
-    t1 = clockCounter();
-    vgg16Time = (float)(t1-t0)*1000.0f/(float)freq/(float)N;
-    printf("OK: vgg16 took %.3f msec (average over %d iterations)\n", (float)(t1-t0)*1000.0f/(float)freq/(float)N, N);
-    t0 = clockCounter();
-    for(int i = 0; i < N; i++) {
-        status = vxProcessGraph(graph_googlenet);
-        if(status != VX_SUCCESS)
-            break;
+    if(binaryFilename_googlenet_str != "empty"){
+        t0 = clockCounter();
+        for(int i = 0; i < N; i++) {
+            status = vxProcessGraph(graph_googlenet);
+            if(status != VX_SUCCESS)
+                break;
+        }
+        t1 = clockCounter();
+        googlenetTime = (float)(t1-t0)*1000.0f/(float)freq/(float)N;
+        printf("OK: googlenet took %.3f msec (average over %d iterations)\n", (float)(t1-t0)*1000.0f/(float)freq/(float)N, N);
     }
-    t1 = clockCounter();
-    googlenetTime = (float)(t1-t0)*1000.0f/(float)freq/(float)N;
-    printf("OK: googlenet took %.3f msec (average over %d iterations)\n", (float)(t1-t0)*1000.0f/(float)freq/(float)N, N);
-    t0 = clockCounter();
-    for(int i = 0; i < N; i++) {
-        status = vxProcessGraph(graph_resnet101);
-        if(status != VX_SUCCESS)
-            break;
+    if(binaryFilename_resnet101_str != "empty"){
+        t0 = clockCounter();
+        for(int i = 0; i < N; i++) {
+            status = vxProcessGraph(graph_resnet101);
+            if(status != VX_SUCCESS)
+                break;
+        }
+        t1 = clockCounter();
+        resnet101Time = (float)(t1-t0)*1000.0f/(float)freq/(float)N;
+        printf("OK: resnet101 took %.3f msec (average over %d iterations)\n", (float)(t1-t0)*1000.0f/(float)freq/(float)N, N);
     }
-    t1 = clockCounter();
-    resnet101Time = (float)(t1-t0)*1000.0f/(float)freq/(float)N;
-    printf("OK: resnet101 took %.3f msec (average over %d iterations)\n", (float)(t1-t0)*1000.0f/(float)freq/(float)N, N);
-    t0 = clockCounter();
-    for(int i = 0; i < N; i++) {
-        status = vxProcessGraph(graph_resnet152);
-        if(status != VX_SUCCESS)
-            break;
+    if(binaryFilename_resnet152_str != "empty"){
+        t0 = clockCounter();
+        for(int i = 0; i < N; i++) {
+            status = vxProcessGraph(graph_resnet152);
+            if(status != VX_SUCCESS)
+                break;
+        }
+        t1 = clockCounter();
+        resnet152Time = (float)(t1-t0)*1000.0f/(float)freq/(float)N;
+        printf("OK: resnet152 took %.3f msec (average over %d iterations)\n", (float)(t1-t0)*1000.0f/(float)freq/(float)N, N);
     }
-    t1 = clockCounter();
-    resnet152Time = (float)(t1-t0)*1000.0f/(float)freq/(float)N;
-    printf("OK: resnet152 took %.3f msec (average over %d iterations)\n", (float)(t1-t0)*1000.0f/(float)freq/(float)N, N);
-    t0 = clockCounter();
-    for(int i = 0; i < N; i++) {
-        status = vxProcessGraph(graph_vgg19);
-        if(status != VX_SUCCESS)
-            break;
+    if(binaryFilename_vgg19_str != "empty"){
+        t0 = clockCounter();
+        for(int i = 0; i < N; i++) {
+            status = vxProcessGraph(graph_vgg19);
+            if(status != VX_SUCCESS)
+                break;
+        }
+        t1 = clockCounter();
+        vgg19Time = (float)(t1-t0)*1000.0f/(float)freq/(float)N;
+        printf("OK: vgg19 took %.3f msec (average over %d iterations)\n", (float)(t1-t0)*1000.0f/(float)freq/(float)N, N);
     }
-    t1 = clockCounter();
-    vgg19Time = (float)(t1-t0)*1000.0f/(float)freq/(float)N;
-    printf("OK: vgg19 took %.3f msec (average over %d iterations)\n", (float)(t1-t0)*1000.0f/(float)freq/(float)N, N);
-    
     /***** OPENCV Additions *****/
 
     // create display windows
